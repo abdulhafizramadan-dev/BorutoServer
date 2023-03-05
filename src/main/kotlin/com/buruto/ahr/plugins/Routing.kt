@@ -1,13 +1,11 @@
 package com.buruto.ahr.plugins
 
-import io.ktor.server.routing.*
-import io.ktor.server.response.*
+import com.buruto.ahr.routes.root
 import io.ktor.server.application.*
+import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
     routing {
-        get("/") {
-            call.respondText("Hello World!")
-        }
+        root()
     }
 }
