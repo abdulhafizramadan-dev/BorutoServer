@@ -410,8 +410,12 @@ class HeroRepositoryImpl : HeroRepository {
         )
     }
 
-    override suspend fun searchHeroes(page: Int): ApiResponse {
-        TODO("Not yet implemented")
+    override suspend fun searchHeroes(name: String?): ApiResponse {
+        return ApiResponse(
+            success = true,
+            message = "Success search heroes",
+            data = findHeroes(query = name)
+        )
     }
 
     private fun calculatePage(page: Int): Map<String, Int?> {
@@ -428,5 +432,13 @@ class HeroRepositoryImpl : HeroRepository {
             PREV_PAGE_KEY to prevPage,
             NEXT_PAGE_KEY to nextPage
         )
+    }
+
+    private fun findHeroes(query: String?): List<Hero> {
+        return if (!query.isNullOrEmpty()) {
+            heroes.values.flatten().filter {  hero ->
+                hero.name.lowercase().contains(query)
+            }
+        } else emptyList()
     }
 }
