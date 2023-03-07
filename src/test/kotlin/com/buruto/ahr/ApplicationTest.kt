@@ -98,4 +98,70 @@ class ApplicationTest {
         }
     }
 
+
+    @Test
+    fun `access search heroes endpoint, get single hero, assert correct`() = testApplication {
+
+        environment {
+            developmentMode = false
+        }
+        client.get("/boruto/heroes/search?name=sas").apply {
+            assertEquals(HttpStatusCode.OK, status)
+            val actualResponse = Json.decodeFromString<ApiResponse>(serializer(), bodyAsText())
+            assertEquals(1, actualResponse.data.size)
+        }
+    }
+
+    @Test
+    fun `access search heroes endpoint, get multiple heroes, assert correct`() = testApplication {
+
+        environment {
+            developmentMode = false
+        }
+        client.get("/boruto/heroes/search?name=sa").apply {
+            assertEquals(HttpStatusCode.OK, status)
+            val actualResponse = Json.decodeFromString<ApiResponse>(serializer(), bodyAsText())
+            assertEquals(3, actualResponse.data.size)
+        }
+    }
+
+    @Test
+    fun `access search heroes endpoint, search empty name, assert empty response`() = testApplication {
+
+        environment {
+            developmentMode = false
+        }
+        client.get("/boruto/heroes/search?name=").apply {
+            assertEquals(HttpStatusCode.OK, status)
+            val actualResponse = Json.decodeFromString<ApiResponse>(serializer(), bodyAsText())
+            assertEquals(emptyList(), actualResponse.data)
+        }
+    }
+
+    @Test
+    fun `access search heroes endpoint, search un existing hero, assert empty response`() = testApplication {
+
+        environment {
+            developmentMode = false
+        }
+        client.get("/boruto/heroes/search?name=unknown").apply {
+            assertEquals(HttpStatusCode.OK, status)
+            val actualResponse = Json.decodeFromString<ApiResponse>(serializer(), bodyAsText())
+            assertEquals(emptyList(), actualResponse.data)
+        }
+    }
+
+
+    @Test
+    fun `access search un existing endpoint, assert not found`() = testApplication {
+
+        environment {
+            developmentMode = false
+        }
+        client.get("/boruto/unknown").apply {
+            assertEquals(HttpStatusCode.NotFound, status)
+            assertEquals("404: Page Not Found", bodyAsText())
+        }
+    }
+
 }
