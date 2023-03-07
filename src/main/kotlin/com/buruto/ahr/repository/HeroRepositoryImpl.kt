@@ -422,8 +422,8 @@ class HeroRepositoryImpl : HeroRepository {
         var prevPage: Int? = page
         var nextPage: Int? = page
 
-        if (page in 1..4) nextPage?.plus(1)
-        if (page in 2..5) prevPage?.minus(1)
+        if (page in 1..4) nextPage = nextPage?.plus(1)
+        if (page in 2..5) prevPage = prevPage?.minus(1)
 
         if (page == 1) prevPage = null
         if (page == 5) nextPage = null
