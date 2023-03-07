@@ -26,15 +26,16 @@ fun Routing.getAllHeroes() {
         }
         catch (exception: NumberFormatException) {
             call.respond(
+                status = HttpStatusCode.BadRequest,
                 message = ApiResponse(
                     success = false,
                     message = "Only number allowed!"
                 ),
-                status = HttpStatusCode.BadRequest
             )
         }
         catch (exception: IllegalArgumentException) {
             call.respond(
+                status = HttpStatusCode.BadRequest,
                 message = ApiResponse(
                     success = false,
                     message = "Heroes not found!"

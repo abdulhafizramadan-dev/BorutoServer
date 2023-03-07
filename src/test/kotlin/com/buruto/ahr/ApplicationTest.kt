@@ -24,7 +24,7 @@ class ApplicationTest {
         }
     }
 
-    @org.junit.Test
+    @Test
     fun `access all heroes endpoint, get default access, access correct information`() = testApplication {
 
         environment {
@@ -38,6 +38,60 @@ class ApplicationTest {
                 prevPage = null,
                 nextPage = 2,
                 data = heroRepository.page1
+            )
+            val actualResponse = Json.decodeFromString<ApiResponse>(serializer(), bodyAsText())
+            assertEquals(expectedResponse, actualResponse)
+        }
+    }
+
+    @Test
+    fun `access all heroes endpoint, get first page, access correct information`() = testApplication {
+
+        environment {
+            developmentMode = false
+        }
+        client.get("/boruto/heroes?page=1").apply {
+            assertEquals(HttpStatusCode.OK, status)
+            val expectedResponse = ApiResponse(
+                success = true,
+                message = "Success get heroes",
+                prevPage = null,
+                nextPage = 2,
+                data = heroRepository.page1
+            )
+            val actualResponse = Json.decodeFromString<ApiResponse>(serializer(), bodyAsText())
+            assertEquals(expectedResponse, actualResponse)
+        }
+    }
+
+    @Test
+    fun `access all heroes endpoint, get out of range page, get error`() = testApplication {
+
+        environment {
+            developmentMode = false
+        }
+        client.get("/boruto/heroes?page=100").apply {
+            assertEquals(HttpStatusCode.BadRequest, status)
+            val expectedResponse = ApiResponse(
+                success = false,
+                message = "Heroes not found!"
+            )
+            val actualResponse = Json.decodeFromString<ApiResponse>(serializer(), bodyAsText())
+            assertEquals(expectedResponse, actualResponse)
+        }
+    }
+
+    @Test
+    fun `access all heroes endpoint, get wrong type page, get error`() = testApplication {
+
+        environment {
+            developmentMode = false
+        }
+        client.get("/boruto/heroes?page=first").apply {
+            assertEquals(HttpStatusCode.BadRequest, status)
+            val expectedResponse = ApiResponse(
+                success = false,
+                message = "Only number allowed!"
             )
             val actualResponse = Json.decodeFromString<ApiResponse>(serializer(), bodyAsText())
             assertEquals(expectedResponse, actualResponse)
